@@ -269,6 +269,17 @@ class Gen_compressed(threading.Thread):
         remove = "var Blockly={Generator:{}};"
         self.do_compile(params, target_filename, filenames, remove)
 
+        # Read in all the source files from the **other** block_generators folder
+
+        filenames = glob.glob(os.path.join("../../blocks_generators", "*.js"))
+        for filename in filenames:
+            f = open(filename)
+            params.append(("js_code", "".join(f.readlines())))
+            f.close()
+        filenames.insert(0, "[goog.provide]")
+
+        self.do_compile(params, target_filename, filenames, remove)
+
     def do_compile(self, params, target_filename, filenames, remove):
         # Send the request to Google.
         headers = {"Content-type": "application/x-www-form-urlencoded"}
